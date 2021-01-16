@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <script src="http://d3js.org/d3.v4.min.js" charset="utf-8"></script>
+    </head>
+    <body>
+        <select id = "dropdown">
+            <option selected="selected" value="sales.csv">dataset1</option>
+            <option value="sales2.csv">dataset2</option>
+        </select>
+        <div id='vis-container'></div>
+        <script>
+            var margin = {top: 20, right: 20, bottom: 30, left: 40},
+                width = 960 - margin.left - margin.right,
+                height = 500 - margin.top - margin.bottom;
+
+            var svg = d3.select("#vis-container").append("svg")
+            .attr("width", width + margin.left + margin.right)
+            .attr("height", height + margin.top + margin.bottom)
+            .append("g")
+            .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+
+            // def scaleBand and scaleLinear objects
+            var x = d3.scaleBand()
+                    .range([0, width])
+                    .padding(0.1);
+            var y = d3.scaleLinear()
+                    .range([height, 0]);
+
+            // get the data
+            d3.csv("./sales.csv", function(error, data) {
+                if (error) throw error;
+
+                // format the data
+                data.forEach(function(d) {
+                    d.sales = +d.sales;
+                });
+
+                // Scale the range of the data in the domains
+                x.domain(data.map(function(d) { return d.salesperson; }));
+                y.domain([0, d3.max(data, function(d) { return d.sales; })]);
+
+                // append the rectangles for the bar chart
+                svg.selectAll(".bar")
+                    .data(data)
+                    .enter().append("rect")
+                    .attr("class", "bar")
+                    .attr("x", function(d) { return x(d.salesperson); })
+                    .attr("width", x.bandwidth())
+                    .attr("y", function(d) { return y(d.sales); })
+                    .attr("height", function(d) { return height - y(d.sales); });
+
+                // add the x Axis
+                svg.append("g")
+                    .attr("transform", "translate(0," + height + ")")
+                    .call(d3.axisBottom(x));
+
+                // add the y Axis
+                svg.append("g")
+                    .call(d3.axisLeft(y));
+                });
+
+            // on-change logic
+            d3.select('#dropdown')
+			.on("change", function () {
+                const sect = document.getElementById("dropdown");
+				const selectedValue = document.getElementById("dropdown").options[sect.selectedIndex].value;
+				console.log(selectedValue)
+
+                d3.csv(selectedValue, function(error, data) {
+                    console.log(data)
+                    // D3 starts from here on
+                    // (re)set scaleBand and scaleLinear objects
+                    var x = d3.scaleBand()
+                        .range([0, width])
+                        .padding(0.1);
+                    var y = d3.scaleLinear()
+                        .range([height, 0]);
+
+                    var bars = svg.selectAll(".bar").data(data);
+
+                    // Add bars for new data
+                    bars.enter()
+                      .append("rect")
+                        .attr("class", "bar")
+                        .attr("x", function(d) { return x(d.salesperson); })
+                        .attr("width", x.bandwidth())
+                        .attr("y", function(d) { return y(d.sales); })
+                        .attr("height", function(d) { return height - y(d.sales); });
+
+                    // Update old ones, already have x / width from before
+                    bars
+                        .transition().duration(250)
+                        .attr("y", function(d) { return y(d.sales); })
+                        .attr("height", function(d) { return height - y(d.sales); });
+
+                    // Remove old ones
+                    bars.exit().remove();
+                })
+            })
+        </script>
+    </body>
+</html>
