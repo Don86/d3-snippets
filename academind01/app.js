@@ -1,5 +1,6 @@
 // HOW ENTER WORKS, FINALLY
 // sauce: https://www.youtube.com/watch?v=TOJ9yjvlapY
+// demo code: https://academind.com/tutorials/d3js-basics/
 // Read comments carefully from top to bottom
 
 const DUMMY_DATA = [
@@ -37,3 +38,36 @@ const bars = container
     .style("height", data => (data.value * 10) + "px"); 
 
 // ========== Doing it with SVG ==========
+// More info on scales: https://github.com/d3/d3-scale
+const container2 = d3.select("#div3")
+    .append("svg")
+    .classed("container2", true)
+    .style("border", "1px solid red")
+
+// xScale and yScale are actually functions that map an input value
+// scaleBand() gives a categorical scale for x (every item has the same width)
+// rangeRound method is the range of the scale so the scale runs from 0 to 250
+const xScale = d3.scaleBand()  
+.domain(DUMMY_DATA.map(d => d.region))
+.rangeRound([0, 250])
+.padding(0.1);
+
+//console.log(DUMMY_DATA.map(d => d.region)) //["USA", "India", "China", "Germany"]
+
+// Calc the correct height of each bar
+// .range() has the bigger number on the LHS because D3's coordinates start at the top-left corner
+const yScale = d3.scaleLinear()
+.domain([0, d3.max(DUMMY_DATA.map(d => d.value))*1.2])
+.range([200, 0]);
+
+// create bar elements
+const bars2 = container2
+    .selectAll("#bar2") // selectAll elements by class="bar". Make sure that the elements to be created will have the class "bar" later.
+    .data(DUMMY_DATA)
+    .enter()
+    .append("rect")
+    .classed("bar2", true)
+    .attr("width", xScale.bandwidth())
+    .attr("height", (d) => 200 - yScale(d.value))
+    .attr("x", d => xScale(d.region))
+    .attr("y", d => yScale(d.value)); 
