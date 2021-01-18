@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <style>
+        #chart_01 {
+            height: 110px;
+            position: relative;
+            width: 360px;
+        }
+
+        #chart_02 {
+            height: 110px;
+            position: relative;
+            width: 360px;
+        }
+    </style>
+    <meta charset="UTF-8">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/4.11.0/d3.min.js"></script>
+</head>
+
+<body>
+    <div id="chart_01">
+        <h2>Chart 01</h2>
+    </div>
+    <div id="chart_02">
+        <h2>Chart 02</h2>
+    </div>
+
+    <script>
+        var source = [{ x: 3, y: 6 },
+        { x: 8, y: 40 },
+        { x: 9, y: 10 }];
+
+        var canvas_01 = d3.select("#chart_01")
+            .append("svg")
+            .attr("width", 500)
+            .attr("height", 200)
+
+        canvas_01.selectAll(".sweetpoint")
+            .data(source)
+            .enter()
+            .append("rect")
+            .classed("sweetpoint", true)
+            .attr("width", function (data_) {
+                return data_.x * 40;
+            })
+            .attr("height", 10)
+            .attr("y", function (data_, index_) {
+                return index_ * 30;
+            })
+            .attr("fill", "#e4e4e4")
+
+            .on("mouseover", function (data_, index_) {
+                d3.select(this).style("fill", "#696969");
+
+                canvas_02
+                    .selectAll('.sweetpoint')
+                    .filter(function (d, i) {
+                        return i === index_
+                    })
+                    .style("fill", "#696969");
+            })
+            .on("mousemove", function (data_, index_) { })
+            .on("mouseout", function (data_, index_) {
+                d3.selectAll(".sweetpoint").style("fill", "#e4e4e4");
+            })
+
+        var canvas_02 = d3.select("#chart_02")
+            .append("svg")
+            .attr("width", 500)
+            .attr("height", 200)
+
+        canvas_02.selectAll(".sweetpoint")
+            .data(source)
+            .enter()
+            .append("rect")
+            .classed("sweetpoint", true)
+            .attr("width", function (data_) {
+                return data_.x * 10;
+            })
+            .attr("height", 10)
+            .attr("y", function (data_, index_) {
+                return index_ * 30;
+            })
+            .attr("fill", "#e4e4e4")
+
+            .on("mouseover", function (data_, index_) {
+                d3.select(this).style("fill", "#696969");
+
+                canvas_01
+                    .selectAll('.sweetpoint')
+                    .filter(function (d, i) {
+                        return i === index_
+                    })
+                    .style("fill", "#696969");
+            })
+            .on("mousemove", function (data_, index_) { })
+            .on("mouseout", function (data_, index_) {
+                d3.selectAll(".sweetpoint").style("fill", "#e4e4e4");
+            });
+    </script>
+    </div>
+
+</body>
+
+</html>
