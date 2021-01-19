@@ -11,7 +11,7 @@
     <link rel="stylesheet" href="">
 
     <!-- Load d3.js -->
-    <script src="https://d3js.org/d3.v4.js"></script>
+    <script src='https://d3js.org/d3.v4.min.js'></script>
 </head>
 
 <body>
@@ -34,18 +34,20 @@
         d3.csv("./boxplot_iris_data.csv", function (data) {
             // Compute quartiles, median, inter quantile range min and max
             // these info are then used to draw the box.
-            var sumstat = d3.nest() // nest function allows to group the calculation per level of a factor
+            var sumstat = d3.nest() // nest function allows to group the calculation per level of a feature
                 .key(function (d) { return d.Species; })
                 .rollup(function (d) {
-                    q1 = d3.quantile(d.map(function (g) { return g.Sepal_Length; }).sort(d3.ascending), .25)
-                    median = d3.quantile(d.map(function (g) { return g.Sepal_Length; }).sort(d3.ascending), .5)
-                    q3 = d3.quantile(d.map(function (g) { return g.Sepal_Length; }).sort(d3.ascending), .75)
+                    q1 = d3.quantile(d.map( (g) => ( g.Sepal_Length )).sort(d3.ascending), .25)
+                    median = d3.quantile(d.map( (g) => ( g.Sepal_Length )).sort(d3.ascending), .5)
+                    q3 = d3.quantile(d.map( (g) => ( g.Sepal_Length )).sort(d3.ascending), .75)
+                    sd = d3.deviation(d.map( (g) => ( g.Sepal_length )))
                     interQuantileRange = q3 - q1
                     data_min = q1 - 1.5 * interQuantileRange
                     data_max = q3 + 1.5 * interQuantileRange
-                    return ({ q1: q1, median: median, q3: q3, interQuantileRange: interQuantileRange, data_min: data_min, data_max: data_max })
+                    return ({ q1: q1, median: median, q3: q3, sd: sd, interQuantileRange: interQuantileRange, data_min: data_min, data_max: data_max })
                 })
                 .entries(data);
+            console.log(sumstat)
 
             // Show the X scale
             var x = d3.scaleBand()
@@ -62,6 +64,8 @@
                 .domain([3, 9])
                 .range([height, 0])
             svg.append("g").call(d3.axisLeft(y));
+            
+            const boxWidth = 100
 
             // Show the main vertical line
             svg.selectAll("vertLines")
@@ -76,7 +80,6 @@
                 .style("width", 40);
 
             // rectangle for the main box
-            var boxWidth = 100
             svg.selectAll("boxes")
                 .data(sumstat)
                 .enter()
@@ -101,13 +104,13 @@
                 .style("width", 80);
 
             // Add individual points with jitter
-            var jitterWidth = 50
+            const jitterWidth = 50
             svg.selectAll("indPoints")
                 .data(data)
                 .enter()
                 .append("circle")
-                .attr("cx", function (d) { return (x(d.Species) - jitterWidth / 2 + Math.random() * jitterWidth) })
-                .attr("cy", function (d) { return (y(d.Sepal_Length)) })
+                .attr("cx", (d) => (x(d.Species) - jitterWidth / 2 + Math.random() * jitterWidth) )
+                .attr("cy", (d) => (y(d.Sepal_Length)) )
                 .attr("r", 4)
                 .style("fill", "white")
                 .attr("stroke", "black");

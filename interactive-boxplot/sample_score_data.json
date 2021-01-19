@@ -1,0 +1,41 @@
+[
+    {
+        "player": "sarah",
+        "game1_score": [
+            350,
+            360,
+            370
+        ],
+        "game2_score": [
+            300,
+            350,
+            325
+        ]
+    },
+    {
+        "player": "john",
+        "game1_score": [
+            340,
+            330,
+            323
+        ],
+        "game2_score": [
+            400,
+            500,
+            200
+        ]
+    },
+    {
+        "player": "elizabeth",
+        "game1_score": [
+            335,
+            360,
+            320
+        ],
+        "game2_score": [
+            300,
+            400,
+            450
+        ]
+    }
+]

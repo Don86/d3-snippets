@@ -28,7 +28,7 @@
     </div>
 
     <script>
-        var source = [{ x: 3, y: 6 },
+        const data = [{ x: 3, y: 6 },
         { x: 8, y: 40 },
         { x: 9, y: 10 }];
 
@@ -38,7 +38,7 @@
             .attr("height", 200)
 
         canvas_01.selectAll(".sweetpoint")
-            .data(source)
+            .data(data)
             .enter()
             .append("rect")
             .classed("sweetpoint", true)
@@ -50,10 +50,8 @@
                 return index_ * 30;
             })
             .attr("fill", "#e4e4e4")
-
             .on("mouseover", function (data_, index_) {
                 d3.select(this).style("fill", "#696969");
-
                 canvas_02
                     .selectAll('.sweetpoint')
                     .filter(function (d, i) {
@@ -72,7 +70,7 @@
             .attr("height", 200)
 
         canvas_02.selectAll(".sweetpoint")
-            .data(source)
+            .data(data)
             .enter()
             .append("rect")
             .classed("sweetpoint", true)
@@ -84,10 +82,8 @@
                 return index_ * 30;
             })
             .attr("fill", "#e4e4e4")
-
             .on("mouseover", function (data_, index_) {
                 d3.select(this).style("fill", "#696969");
-
                 canvas_01
                     .selectAll('.sweetpoint')
                     .filter(function (d, i) {
