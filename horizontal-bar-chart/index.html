@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset='utf-8' />
+    <title>Simple Bar chart</title>
+    <script src="https://d3js.org/d3.v4.min.js"></script>
+
+    <style>
+        body {
+            font-family: "Arial", sans-serif;
+        }
+    </style>
+
+</head>
+
+<body>
+
+    <div id="graphic"></div>
+
+    <script>
+        const MARGIN = { top: 30, right: 10, bottom: 50, left: 50 },
+            WIDTH_LOADINGS = 500,
+            HEIGHT_LOADINGS = 300;
+
+        const data = [{ value: -10, dataset: "barbaz" },
+        { value: 40, dataset: "barbar" },
+        { value: -10, dataset: "foobaz" },
+        { value: -50, dataset: "foobar" },
+        { value: 30, dataset: "baz" },
+        { value: -20, dataset: "bar" },
+        { value: -70, dataset: "foo" }];
+
+        // Add svg to
+        var svg = d3.select('#graphic')
+            .append('svg')
+            .attr('width', WIDTH_LOADINGS + MARGIN.left + MARGIN.right)
+            .attr('height', HEIGHT_LOADINGS + MARGIN.top + MARGIN.bottom)
+            .append('g')
+            .attr('transform', 'translate(' + MARGIN.left + ',' + MARGIN.top + ')');
+
+        // set the ranges
+        const yScale = d3.scaleBand().range([HEIGHT_LOADINGS, 0]).padding(0.1).domain(data.map((d) => (d.dataset)));
+        const xScale = d3.scaleLinear().range([0, WIDTH_LOADINGS]).domain(d3.extent(data.map((d) => (d.value))));
+
+        // append the rectangles for the bar chart
+        svg.selectAll(".bar_loadings")
+            .data(data)
+            .enter().append("rect")
+            .attr("class", function (d) {
+                return "bar_loadings bar--" + (d.value < 0 ? "negative" : "positive");
+            })
+            .attr("x", (d) => (xScale(Math.min(0, d.value))))
+            .attr("y", (d) => (yScale(d.dataset)))
+            .attr("width", (d) => (Math.abs(xScale(d.value) - xScale(0))))
+            .attr("height", yScale.bandwidth());
+
+        // add the x Axis
+        svg.append("g")
+            .attr("transform", "translate(0," + HEIGHT_LOADINGS + ")")
+            .call(d3.axisBottom(xScale));
+
+        // add the y Axis
+        let yAxisGroup = svg.append("g")
+            .attr("class", "y axis")
+            .attr("transform", "translate(" + xScale(0) + ",0)")
+            .call(d3.axisRight(yScale));
+        yAxisGroup.selectAll('.tick')
+            .data(data)
+            .select('text')
+            .attr('x', (d, i) => (d.value < 0 ? 9 : -9))
+            .style('text-anchor', (d, i) => (d.value < 0 ? 'start' : 'end'));
+
+    </script>
+</body>
+
+</html>
