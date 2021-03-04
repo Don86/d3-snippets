@@ -1,6 +1,6 @@
 // Note: seems mentally easier to simply call exit().remove() and enter() to reset the graph each time
 // Moral of the story: beware of indices when data get exit() or enter(). 
-// sauce: https://academind.com/tutorials/d3js-basics/
+// sauce: https://www.youtube.com/watch?v=ZOeWdkq-L90
 
 const countryData = {
     items: ['China', 'India', 'USA'],
@@ -27,7 +27,7 @@ function drawNamedRectangles(data) {
     .append("li")
     .text(data => data)
 
-    // make Germany appear after 2s, with a green bg
+    // enter() example: make Germany appear after 2s, with a green bg
     setTimeout(() => {
         data.addItem("Germany") //take for granted that the addItem() method was defined
         d3.select("ul")
@@ -39,7 +39,7 @@ function drawNamedRectangles(data) {
         .text(data => data)
     }, 1000);
 
-    // Remove China after 5s
+    // exit() example: remove China after 5s
     setTimeout(() => {
         data.removeItem(0) // Mark China as red on the DOM, to remove. 
         d3.select("ul")
@@ -52,11 +52,11 @@ function drawNamedRectangles(data) {
         d3.select("ul")
         .selectAll("li") 
         .data(data.items, d => d)
-        .exit() 
+        .exit()
         .remove()
     }, 3000);
 
-    // Remove China after 5s
+    // Update second item to Russia
     setTimeout(() => {
         const newCountry = "Russia"
         data.updateItem(1, newCountry) // Update second item to Russia. Note which one the second item is! (It's not India)
